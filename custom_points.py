@@ -101,7 +101,9 @@ def run(
     NUM_WP - количество шагов симуляции
 
     '''
-    n = int(input('Введите количество точек'))
+    n = int(input('Введите количество точек:'))
+    
+    v = float(input("Ускорение:"))# От этого зависит ускорение, но это не оно. Я всех обманул
 
     x0 = 0
 
@@ -122,7 +124,7 @@ def run(
         for j in range(NUM_PART*i,NUM_PART*(i+1)):
             k = (j%NUM_PART)/(NUM_PART)
 
-            TARGET_POS[j, :] = WAY[i][0] + (WAY[i+1][0]-WAY[i][0])*k, WAY[i][1] + (WAY[i+1][1]-WAY[i][1])*k, WAY[i][2] + (WAY[i+1][2]-WAY[i][2])*k
+            TARGET_POS[j, :] = WAY[i][0] + (WAY[i+1][0]-WAY[i][0])*(k**(v)), WAY[i][1] + (WAY[i+1][1]-WAY[i][1])*(k**(v)), WAY[i][2] + (WAY[i+1][2]-WAY[i][2])*(k**(v))
 
 
     

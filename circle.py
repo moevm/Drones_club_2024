@@ -103,17 +103,17 @@ def run(
 
     '''
 
-    r = int(input())
+    r = float(input("radius:"))
 
-    x0 = 0
+    x0 = float(input("x:"))
 
-    y0 = 0
+    y0 = float(input("y:"))
 
-    z0 = .1
+    z0 = float(input("z:"))
 
 
 
-    INIT_XYZS = np.array([[x0, y0, z0]])
+    INIT_XYZS = np.array([[x0+sin(0)*r, y0+cos(0)*r, z0]])
     
 
 
@@ -122,7 +122,7 @@ def run(
     
     for i in range(NUM_WP):
 
-        TARGET_POS[i, :] = INIT_XYZS[0, 0] + sin(i/80)*r, INIT_XYZS[0, 1] + cos(i/80)*r, INIT_XYZS[0, 2]
+        TARGET_POS[i, :] = x0 + sin(i/80)*r, y0 + cos(i/80)*r, z0
       
 
 

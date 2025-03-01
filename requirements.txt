@@ -1,0 +1,8 @@
+git+https://github.com/utiasDSL/gym-pybullet-drones.git@3d7b12edd4915a27e6cec9f2c0eb4b5479f7735e
+numpy==1.26.4
+pybullet
+cmake
+matplotlib
+gymnasium
+transforms3d
+scipy

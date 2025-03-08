@@ -5,7 +5,7 @@ import numpy as np
 from gymnasium import spaces
 import pybullet as p
 import pkg_resources
-import GameObject as GameObject
+#import GameObject as GameObject
 
 from gym_pybullet_drones.envs.BaseAviary import BaseAviary
 from gym_pybullet_drones.utils.enums import DroneModel, Physics, ImageType

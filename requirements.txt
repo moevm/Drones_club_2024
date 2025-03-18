@@ -6,3 +6,5 @@ matplotlib
 gymnasium
 transforms3d
 scipy
+apriltag
+opencv-python

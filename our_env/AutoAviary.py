@@ -6,6 +6,8 @@ from gymnasium import spaces
 import pybullet as p
 import pkg_resources
 #import GameObject as GameObject
+from our_env.TagDetector import AprilTagDetector
+
 
 from gym_pybullet_drones.envs.BaseAviary import BaseAviary
 from gym_pybullet_drones.utils.enums import DroneModel, Physics, ImageType
@@ -75,7 +77,9 @@ class AutoAviary(BaseAviary):
                          output_folder=output_folder
                          )
 
-
+	
+        self.tag_detector = AprilTagDetector()
+	
         self.ONBOARD_IMG_PATH = os.path.join(self.OUTPUT_FOLDER, "recording_" + datetime.now().strftime("%m.%d.%Y_%H.%M.%S"))
         if self.RECORD:
             # self.ONBOARD_IMG_PATH = os.path.join(self.OUTPUT_FOLDER, "recording_" + datetime.now().strftime("%m.%d.%Y_%H.%M.%S"))
@@ -107,6 +111,12 @@ class AutoAviary(BaseAviary):
                                     path=self.ONBOARD_IMG_PATH+"/drone_"+str(i)+"/",
                                     frame_num=int(self.step_counter/self.IMG_CAPTURE_FREQ)
                                     )
+                    if (len(self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8)))>0):
+                        print("*"*20)
+                        print("TAGS:", )
+                        print(self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8)))
+                        print("*"*20)
+        
 
         #### Read the GUI's input parameters #######################
         if self.GUI and self.USER_DEBUG:
@@ -204,6 +214,7 @@ class AutoAviary(BaseAviary):
         if self.IMG_RES is None:
             print("[ERROR] in BaseAviary._getDroneImages(), remember to set self.IMG_RES to np.array([width, height])")
             exit()
+        
         rot_mat = np.array(p.getMatrixFromQuaternion(self.quat[nth_drone, :])).reshape(3, 3)
         target = np.dot(rot_mat, np.array([1000, 0, 0])) + np.array(self.pos[nth_drone, :])
 
@@ -283,10 +294,14 @@ class AutoAviary(BaseAviary):
     def _addObstacles(self):
         SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
         path_3d_models = os.path.dirname(SCRIPT_DIR) + '/our_env/3d_models/'
-        #path_textures = os.path.dirname(SCRIPT_DIR) + '/our_env/textures/'
+        path_textures = os.path.dirname(SCRIPT_DIR) + '/our_env/textures/'
         if 1:
             p.loadURDF(f'{path_3d_models}cube_with_sobaken.urdf', 
                        [1.5, 1.5, .5],
+                       p.getQuaternionFromEuler([0,0,0]),
+                       physicsClientId=self.CLIENT)
+            p.loadURDF(f'{path_3d_models}cube.urdf', 
+                       [2, 0, .5],
                        p.getQuaternionFromEuler([0,0,0]),
                        physicsClientId=self.CLIENT)
         else:

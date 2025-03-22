@@ -16,12 +16,52 @@ class Drone():
     
 
     def get_trajectory(self):
-        print(self.__trajectory)
         return self.__trajectory
     
 
     def fly_forward(self, move_vector : np.array):
-        pass
+        yaw, pitch, roll = np.radians(self.__rotation)
+        
+        rz = np.array([
+            [np.cos(yaw), -np.sin(yaw), 0],
+            [np.sin(yaw),  np.cos(yaw), 0],
+            [0, 0, 1]
+        ])
+        
+        ry = np.array([
+            [np.cos(pitch), 0, np.sin(pitch)],
+            [0, 1, 0],
+            [-np.sin(pitch), 0, np.cos(pitch)]
+        ])
+        
+        rx = np.array([
+            [1, 0, 0],
+            [0, np.cos(roll), -np.sin(roll)],
+            [0, np.sin(roll), np.cos(roll)]
+        ])
+        
+        r = rz @ ry @ rx
+        
+        rotated_vector = r @ move_vector
+        
+        frame_count = ceil(sqrt(sum(move_vector ** 2)) / self.__speed)
+
+        trajectory = np.zeros((frame_count, 3))
+        trajectory[-1] = self.__position + rotated_vector
+
+        rotated_vector /= frame_count
+
+        for i in range(1, frame_count):
+            trajectory[i - 1] = self.__position + rotated_vector / frame_count * i
+        
+        self.__trajectory = np.vstack((self.__trajectory, trajectory))
+        self.__position = self.__trajectory[-1]
+
+
+    def rotate(self, rotate_vector : np.array):
+        for i in range(3):
+            self.__rotation[i] += rotate_vector[i]
+            self.__rotation[i] %= 360
 
 
     def fly_line(self, target_pos : np.array):
@@ -29,7 +69,10 @@ class Drone():
         frame_count = ceil(sqrt(sum(move_vector ** 2)) / self.__speed)
         trajectory = np.zeros((frame_count, 3))
 
-        for i in range(1, frame_count + 1):
+        trajectory[-1] = self.__position + move_vector
+
+        for i in range(1, frame_count):
             trajectory[i - 1] = self.__position + move_vector / frame_count * i
 
         self.__trajectory = np.vstack((self.__trajectory, trajectory))
+        self.__position = self.__trajectory[-1]

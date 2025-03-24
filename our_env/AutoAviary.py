@@ -5,9 +5,9 @@ import numpy as np
 from gymnasium import spaces
 import pybullet as p
 import pkg_resources
-#import GameObject as GameObject
-from our_env.TagDetector import AprilTagDetector
 
+from our_env.TagDetector import AprilTagDetector
+from our_env.GameObject import GameObject
 
 from gym_pybullet_drones.envs.BaseAviary import BaseAviary
 from gym_pybullet_drones.utils.enums import DroneModel, Physics, ImageType
@@ -101,6 +101,10 @@ class AutoAviary(BaseAviary):
 
     
     def step(self, action):
+     
+    	##tag__detected = 0
+    	##tag__detected = bull(tag__detected)
+    	
         if self.VISION_ATTR: 
                 for i in range(self.NUM_DRONES):
                     # print("B\n"*20)
@@ -116,6 +120,11 @@ class AutoAviary(BaseAviary):
                         print("TAGS:", )
                         print(self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8)))
                         print("*"*20)
+                        tag__detected = True
+                  ##  if tag detected != False:
+                  ##  	dr
+                    	
+                    
         
 
         #### Read the GUI's input parameters #######################
@@ -290,20 +299,36 @@ class AutoAviary(BaseAviary):
     
     def _computeInfo(self):
         return {"answer": 42}
-
+    
     def _addObstacles(self):
         SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
         path_3d_models = os.path.dirname(SCRIPT_DIR) + '/our_env/3d_models/'
         path_textures = os.path.dirname(SCRIPT_DIR) + '/our_env/textures/'
         if 1:
-            p.loadURDF(f'{path_3d_models}cube_with_sobaken.urdf', 
-                       [1.5, 1.5, .5],
-                       p.getQuaternionFromEuler([0,0,0]),
-                       physicsClientId=self.CLIENT)
-            p.loadURDF(f'{path_3d_models}cube.urdf', 
-                       [2, 0, .5],
-                       p.getQuaternionFromEuler([0,0,0]),
-                       physicsClientId=self.CLIENT)
+            ##p.loadURDF(f'{path_3d_models}cube_with_sobaken.urdf', 
+                    ##   [1.5, 1.5, .5],
+                    ##   p.getQuaternionFromEuler([0,0,0]),
+                    ##   physicsClientId=self.CLIENT)
+                       
+            cube_1 = GameObject("cube_1.urdf",[2, 0, 0.5], [0, 0, 0], 0)
+            cube_2 = GameObject("cube_2.urdf",[-2, 0, 0.5], [0, 0, 0], 0)
+            cube_3 = GameObject("cube_3.urdf",[0, 2, 0.5], [0, 0, 0], 0)              
+            cube_doge = GameObject("cube_with_sobaken.urdf",[0, -2, 0.5], [0, 0, 0], 0)           
+                       
+                       
+                       
+            ##p.loadURDF(f'{path_3d_models}cube_1.urdf', 
+                      ## [2, 0, .5],
+                     ##  p.getQuaternionFromEuler([0,0,0]),
+                      ## physicsClientId=self.CLIENT)
+           ## p.loadURDF(f'{path_3d_models}cube_2.urdf', 
+                    ##   [4, 0, .5],
+                      ## p.getQuaternionFromEuler([0,0,0]),
+                      ## physicsClientId=self.CLIENT)
+           ## p.loadURDF(f'{path_3d_models}cube_3.urdf', 
+                     ##  [6, 0, .5],
+                     ##  p.getQuaternionFromEuler([0,0,0]),
+                      ## physicsClientId=self.CLIENT)           
         else:
             # TODO add models
             pass

@@ -3,7 +3,7 @@ import os
 
 class GameObject:
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    models_path = SCRIPT_DIR + '/our_env/3d_models/'
+    models_path = SCRIPT_DIR + '/3d_models/'
 
     position : list[3]
     rotation : list[3]
@@ -12,6 +12,7 @@ class GameObject:
     __model_name : str
 
     def __init__(self, model_name, position : list[3] = [0, 0, 0], rotation : list[3] = [0, 0, 0], scale : list[3] | float = 1) -> None:
+   
         self.__objectId = p.loadURDF(self.models_path + model_name,
                                    position,
                                    p.getQuaternionFromEuler(rotation),

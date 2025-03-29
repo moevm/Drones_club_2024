@@ -1,7 +1,7 @@
 import time
 import argparse
 import numpy as np
-
+from our_env.TagDetector import AprilTagDetector
 from gym_pybullet_drones.utils.utils import sync, str2bool
 from gym_pybullet_drones.utils.enums import DroneModel, Physics
 from gym_pybullet_drones.envs.CtrlAviary import CtrlAviary
@@ -123,7 +123,21 @@ def run(
                                                              state=obs[0],
                                                              target_pos=TARGET_POS[wp_counter, :],
                                                              )
-       
+        
+        
+        if env.tag_of_cube == True:
+            INIT_XYZS = np.array([[x0, y0, z0]])    
+            x1 = 0
+            y1 = 0
+            z1 = 0
+            for i in range(int(NUM_WP/2)):
+                j = (i+1)/(NUM_WP/2)
+                next_POS[i, :] = (INIT_XYZS[0, 0] + (x1-x0)*j, INIT_XYZS[0, 1] + (y1-y0)*j, INIT_XYZS[0, 2] + (z1-z0)*j)
+                print(next_POS[i, :])
+            TARGET_POS = np.vstack((next_POS, newt2_POS,))
+
+            print('\n'*10, TARGET_POS, '\n'*10)
+             	
         if wp_counter < NUM_WP - 1:
             wp_counter = wp_counter + 1         
         else:

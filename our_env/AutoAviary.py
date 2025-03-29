@@ -8,6 +8,7 @@ import pkg_resources
 
 from our_env.TagDetector import AprilTagDetector
 from our_env.GameObject import GameObject
+###from our_env.TagDetector import image
 
 from gym_pybullet_drones.envs.BaseAviary import BaseAviary
 from gym_pybullet_drones.utils.enums import DroneModel, Physics, ImageType
@@ -98,15 +99,11 @@ class AutoAviary(BaseAviary):
                 exit()
             for i in range(self.NUM_DRONES):
                 os.makedirs(os.path.dirname(self.ONBOARD_IMG_PATH+"/drone_"+str(i)+"/"), exist_ok=True)
-
-    
+  
     def step(self, action):
-     
-    	##tag__detected = 0
-    	##tag__detected = bull(tag__detected)
-    	
+
         if self.VISION_ATTR: 
-                for i in range(self.NUM_DRONES):
+            for i in range(self.NUM_DRONES):
                     # print("B\n"*20)
                     self.rgb[i], self.dep[i], self.seg[i] = self._getDroneImages(i)
                     #### Printing observation to PNG frames example ############
@@ -120,12 +117,8 @@ class AutoAviary(BaseAviary):
                         print("TAGS:", )
                         print(self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8)))
                         print("*"*20)
-                        tag__detected = True
-                  ##  if tag detected != False:
-                  ##  	dr
+                        self.tag_of_cube = True
                     	
-                    
-        
 
         #### Read the GUI's input parameters #######################
         if self.GUI and self.USER_DEBUG:
@@ -310,10 +303,10 @@ class AutoAviary(BaseAviary):
                     ##   p.getQuaternionFromEuler([0,0,0]),
                     ##   physicsClientId=self.CLIENT)
                        
-            cube_1 = GameObject("cube_1.urdf",[2, 0, 0.5], [0, 0, 0], 0)
-            cube_2 = GameObject("cube_2.urdf",[-2, 0, 0.5], [0, 0, 0], 0)
-            cube_3 = GameObject("cube_3.urdf",[0, 2, 0.5], [0, 0, 0], 0)              
-            cube_doge = GameObject("cube_with_sobaken.urdf",[0, -2, 0.5], [0, 0, 0], 0)           
+            cube_1 = GameObject("cube_1.urdf",[4, 0, 0.5], [0, 0, 0], 0)
+            cube_2 = GameObject("cube_2.urdf",[-4, 0, 0.5], [0, 0, 0], 0)
+            cube_3 = GameObject("cube_3.urdf",[0, 4, 0.5], [0, 0, 0], 0)              
+            cube_doge = GameObject("cube_with_sobaken.urdf",[0, -4, 0.5], [0, 0, 0], 0)           
                        
                        
                        

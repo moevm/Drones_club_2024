@@ -106,15 +106,17 @@ class AutoAviary(BaseAviary):
                     # print("B\n"*20)
                     self.rgb[i], self.dep[i], self.seg[i] = self._getDroneImages(i)
                     #### Printing observation to PNG frames example ############
+                    tag = self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8))
+                    hightlite = self.tag_detector.highlight_tags(self.rgb[i].astype(np.uint8),tag)
                     self._exportImage(img_type=ImageType.RGB, # ImageType.BW, ImageType.DEP, ImageType.SEG
-                                    img_input=self.rgb[i],
+                                    img_input=hightlite,
                                     path=self.ONBOARD_IMG_PATH+"/drone_"+str(i)+"/",
                                     frame_num=int(self.step_counter/self.IMG_CAPTURE_FREQ)
                                     )
-                    if (len(self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8)))>0):
+                    if (len(tag)>0):
                         print("*"*20)
                         print("TAGS:", )
-                        print(self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8)))
+                        print(tag)
                         print("*"*20)
         
 
@@ -300,7 +302,7 @@ class AutoAviary(BaseAviary):
                        [1.5, 1.5, .5],
                        p.getQuaternionFromEuler([0,0,0]),
                        physicsClientId=self.CLIENT)
-            p.loadURDF(f'{path_3d_models}cube.urdf', 
+            p.loadURDF(f'{path_3d_models}cube_1.urdf', 
                        [2, 0, .5],
                        p.getQuaternionFromEuler([0,0,0]),
                        physicsClientId=self.CLIENT)

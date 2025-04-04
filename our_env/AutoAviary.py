@@ -31,6 +31,7 @@ class AutoAviary(BaseAviary):
                  user_debug_gui=True,
                  vision_attributes=True,
                  output_folder='my_auto_results'
+                 
                  ):
         """Initialization of an aviary environment for control applications.
 
@@ -62,6 +63,7 @@ class AutoAviary(BaseAviary):
             Whether to draw the drones' axes and the GUI RPMs sliders.
 
         """
+        self.tag_of_cube = False
         super().__init__(drone_model=drone_model,
                          num_drones=num_drones,
                          neighbourhood_radius=neighbourhood_radius,
@@ -117,6 +119,7 @@ class AutoAviary(BaseAviary):
                         print("TAGS:", )
                         print(self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8)))
                         print("*"*20)
+                        
                         self.tag_of_cube = True
                     	
 
@@ -303,25 +306,13 @@ class AutoAviary(BaseAviary):
                     ##   p.getQuaternionFromEuler([0,0,0]),
                     ##   physicsClientId=self.CLIENT)
                        
-            cube_1 = GameObject("cube_1.urdf",[4, 0, 0.5], [0, 0, 0], 0)
-            cube_2 = GameObject("cube_2.urdf",[-4, 0, 0.5], [0, 0, 0], 0)
-            cube_3 = GameObject("cube_3.urdf",[0, 4, 0.5], [0, 0, 0], 0)              
-            cube_doge = GameObject("cube_with_sobaken.urdf",[0, -4, 0.5], [0, 0, 0], 0)           
+            cube_1 = GameObject("cube_1.urdf",[2.5, 0, 0.5], [0, 45, 0], 0)
+            cube_2 = GameObject("cube_2.urdf",[-2, 0, 0.5], [0, 0, 0], 0)
+            cube_3 = GameObject("cube_3.urdf",[0, 2, 0.5], [0, 0, 0], 0)              
+            cube_doge = GameObject("cube_with_sobaken.urdf",[1.1, 0.1, 0.5], [0, 0, 0], 0)           
                        
                        
-                       
-            ##p.loadURDF(f'{path_3d_models}cube_1.urdf', 
-                      ## [2, 0, .5],
-                     ##  p.getQuaternionFromEuler([0,0,0]),
-                      ## physicsClientId=self.CLIENT)
-           ## p.loadURDF(f'{path_3d_models}cube_2.urdf', 
-                    ##   [4, 0, .5],
-                      ## p.getQuaternionFromEuler([0,0,0]),
-                      ## physicsClientId=self.CLIENT)
-           ## p.loadURDF(f'{path_3d_models}cube_3.urdf', 
-                     ##  [6, 0, .5],
-                     ##  p.getQuaternionFromEuler([0,0,0]),
-                      ## physicsClientId=self.CLIENT)           
+                   
         else:
             # TODO add models
             pass

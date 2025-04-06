@@ -36,8 +36,7 @@ def run(
 
     PERIOD = duration_sec
     NUM_WP = control_freq_hz*PERIOD 
-
-
+   
     '''
     Место, которое нелюходимо поменять
     Начало
@@ -51,39 +50,23 @@ def run(
 
     NUM_WP - количество шагов симуляции
     '''
-   
+    inizializate = True
     x0 = 0
     y0 = 0
-    z0 = .1
+    z0 = 0
 
+    TARGET_POS = np.zeros((NUM_WP,3))
     INIT_XYZS = np.array([[x0, y0, z0]])
+    vector_xyz = [1,1,1]
+    pos=0
+    while inizializate:
+        #TODO movement
+        TARGET_POS[pos, :] += vector_xyz[0],vector_xyz[1],vector_xyz[2]
+        pos+=1
+        inizializate = False
+   
 
-    x1 = 2
-    y1 = 1
-    z1 = 4
-
-    next_POS = np.zeros((int(NUM_WP/2), 3)) 
-
-    for i in range(int(NUM_WP/2)):
-        j = (i+1)/(NUM_WP/2)
-        next_POS[i, :] = (INIT_XYZS[0, 0] + (x1-x0)*j, INIT_XYZS[0, 1] + (y1-y0)*j, INIT_XYZS[0, 2] + (z1-z0)*j)
-        print(next_POS[i, :])
     
-    x2 = -3
-    y2 = -2
-    z2 = 2 
- 
-    newt2_POS = np.zeros((int(NUM_WP/2), 3)) 
-
-    for i in range(int(NUM_WP/2)):
-        k = (i+1)/(NUM_WP/2)
-        newt2_POS [i, :] = (next_POS[int(NUM_WP/2)-1, 0] + (x2-x1)*k, next_POS[int(NUM_WP/2)-1, 1] + (y2-y1)*k, next_POS[int(NUM_WP/2)-1, 2] + (z2-z1)*k)
-
-    TARGET_POS = np.vstack((next_POS, newt2_POS,))
-
-    print('\n'*10, TARGET_POS, '\n'*10)
-    
-
 
     # TODO env!!!!
     env = AutoAviary(drone_model=drone,
@@ -110,7 +93,7 @@ def run(
 
 
     ctrl = [DSLPIDControl(drone_model=drone)]
- 
+  
 
     action = np.zeros((1,4))
     START = time.time()
@@ -137,6 +120,7 @@ def run(
                        )
 
         env.render()
+
 
         #### Sync the simulation ###################################
         if gui:

@@ -58,9 +58,9 @@ def run(
 
     INIT_XYZS = np.array([[x0, y0, z0]])
 
-    x1 = 2
-    y1 = 1
-    z1 = 4
+    x1 = 0
+    y1 = 2
+    z1 = 1.1
 
     next_POS = np.zeros((int(NUM_WP/2), 3)) 
 
@@ -69,9 +69,9 @@ def run(
         next_POS[i, :] = (INIT_XYZS[0, 0] + (x1-x0)*j, INIT_XYZS[0, 1] + (y1-y0)*j, INIT_XYZS[0, 2] + (z1-z0)*j)
         print(next_POS[i, :])
     
-    x2 = -3
-    y2 = -2
-    z2 = 2 
+    x2 = 0
+    y2 = 0
+    z2 = 0.1 
  
     newt2_POS = np.zeros((int(NUM_WP/2), 3)) 
 

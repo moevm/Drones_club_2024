@@ -305,12 +305,12 @@ class AutoAviary(BaseAviary):
                     ##   [1.5, 1.5, .5],
                     ##   p.getQuaternionFromEuler([0,0,0]),
                     ##   physicsClientId=self.CLIENT)
-                       
+
             cube_1 = GameObject("cube_1.urdf",[0, 4, 2], [0, 0, 1.5708], 0)
             cube_2 = GameObject("cube_2.urdf",[-2, 6, 0.5], [0, 0, 1.5708], 0)
             cube_3 = GameObject("cube_3.urdf",[0, 8, 0.5], [0, 0, 1.5708], 0)
             cube_4 = GameObject("cube_4.urdf",[2, 6, 0.5], [0, 0, 1.5708], 0)              
-            cube_doge = GameObject("cube_with_sobaken.urdf",[0, 6, 0.5], [0, 0, 0], 0)           
+            cube_doge = GameObject("cube_with_sobaken.urdf",[0, 6, 0.5], [0, 0, 0], 0)  
                        
                        
                    

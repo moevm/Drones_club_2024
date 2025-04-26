@@ -121,6 +121,8 @@ class AutoAviary(BaseAviary):
                         print("*"*20)
                         
                         self.tag_of_cube = True
+                    else:
+                        self.tag_of_cube = False
                     	
 
         #### Read the GUI's input parameters #######################

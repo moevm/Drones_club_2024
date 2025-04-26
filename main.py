@@ -116,11 +116,21 @@ def run(
 
             # Проверяем достигли ли нужного угла
             if all(abs(angle_diff) <= ROTATE_STEP):
-                state = "moving_to_next_point"  # Переход к следующему состоянию
+                if my_route.get_current_point().expecting_tag:
+                    state = "examining_tag" # изучаем тег
+                else:
+                    state = "moving_to_next_point"  # Переход к следующему состоянию
 
         elif state == "moving_to_next_point":
             my_route.next_point()  # Переход к следующей точке маршрута.
             state = "moving_to_target"  # Возвращаемся в начальное состояние
+
+        elif state == "examining_tag":
+            if not env.tag_of_cube:
+                new_position = current_position - current_orientation * MOVE_STEP
+            else:
+                # здесь можно добавить логику если мы полностью увидели тег
+                state = "moving_to_target"
 
         current_orientation = new_orientation[:]
 

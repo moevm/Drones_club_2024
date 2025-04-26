@@ -109,15 +109,17 @@ class AutoAviary(BaseAviary):
                     # print("B\n"*20)
                     self.rgb[i], self.dep[i], self.seg[i] = self._getDroneImages(i)
                     #### Printing observation to PNG frames example ############
+                    tag = self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8))
+                    hightlite = self.tag_detector.highlight_tags(self.rgb[i].astype(np.uint8),tag)
                     self._exportImage(img_type=ImageType.RGB, # ImageType.BW, ImageType.DEP, ImageType.SEG
-                                    img_input=self.rgb[i],
+                                    img_input=hightlite,
                                     path=self.ONBOARD_IMG_PATH+"/drone_"+str(i)+"/",
                                     frame_num=int(self.step_counter/self.IMG_CAPTURE_FREQ)
                                     )
-                    if (len(self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8)))>0):
+                    if (len(tag)>0):
                         print("*"*20)
                         print("TAGS:", )
-                        print(self.tag_detector.detect_tags(self.rgb[i].astype(np.uint8)))
+                        print(tag)
                         print("*"*20)
                         
                         self.tag_of_cube = True
@@ -311,9 +313,7 @@ class AutoAviary(BaseAviary):
             cube_3 = GameObject("cube_3.urdf",[0, 8, 0.5], [0, 0, 1.5708], 0)
             cube_4 = GameObject("cube_4.urdf",[2, 6, 0.5], [0, 0, 1.5708], 0)              
             cube_doge = GameObject("cube_with_sobaken.urdf",[0, 6, 0.5], [0, 0, 0], 0)  
-                       
-                       
-                   
+
         else:
             # TODO add models
             pass

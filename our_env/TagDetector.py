@@ -20,11 +20,11 @@ class AprilTagDetector:
             corners = tag.corners.astype(int)
             # Рисуем квадрат вокруг тега
             cv2.rectangle(image, (corners[0][0], corners[0][1]), 
-                          (corners[2][0], corners[2][1]), (0, 255, 0), thickness=2)
+                          (corners[2][0], corners[2][1]), (0, 255, 0, 255), thickness=2)
 
             # Отображаем ID тега
             cv2.putText(image, str(tag.tag_id), (corners[0][0], corners[0][1] - 10), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0, 255), 2)
 
         return image
 

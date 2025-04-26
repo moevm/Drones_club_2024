@@ -1,13 +1,14 @@
 import time
 import argparse
 import numpy as np
-
+from our_env.TagDetector import AprilTagDetector
 from gym_pybullet_drones.utils.utils import sync, str2bool
 from gym_pybullet_drones.utils.enums import DroneModel, Physics
 from gym_pybullet_drones.envs.CtrlAviary import CtrlAviary
 from gym_pybullet_drones.control.DSLPIDControl import DSLPIDControl
 from gym_pybullet_drones.utils.Logger import Logger
 from our_env.AutoAviary import AutoAviary
+from our_env.Map import Route
 
 DEFAULT_DRONE = DroneModel('cf2x')
 DEFAULT_GUI = True
@@ -15,80 +16,32 @@ DEFAULT_RECORD_VIDEO = True
 DEFAULT_SIMULATION_FREQ_HZ = 240
 DEFAULT_CONTROL_FREQ_HZ = 48
 
-DEFAULT_DURATION_SEC = 12
 DEFAULT_OUTPUT_FOLDER = 'my_results'
 DEFAULT_COLAB = True
-DEF_VISION_ATTR = True
+DEFAULT_VISION_ATTR = True
+
+def normalize_angle(angle):
+    return (angle + np.pi) % (2 * np.pi) - np.pi
 
 def run(
-        drone=DEFAULT_DRONE, 
-        gui=DEFAULT_GUI, 
-        record_video=DEFAULT_RECORD_VIDEO, 
-        vision_attributes = DEF_VISION_ATTR,
-        simulation_freq_hz=DEFAULT_SIMULATION_FREQ_HZ, 
-        control_freq_hz=DEFAULT_CONTROL_FREQ_HZ, 
-        duration_sec=DEFAULT_DURATION_SEC,
+        drone=DEFAULT_DRONE,
+        gui=DEFAULT_GUI,
+        record_video=DEFAULT_RECORD_VIDEO,
+        vision_attributes=DEFAULT_VISION_ATTR,
+        simulation_freq_hz=DEFAULT_SIMULATION_FREQ_HZ,
+        control_freq_hz=DEFAULT_CONTROL_FREQ_HZ,
         output_folder=DEFAULT_OUTPUT_FOLDER,
         plot=True,
         colab=DEFAULT_COLAB
-    ):
-    #### Initialize the simulation #############################
-
-    PERIOD = duration_sec
-    NUM_WP = control_freq_hz*PERIOD 
-
-
-    '''
-    Место, которое нелюходимо поменять
-    Начало
-
-    x0, y0, z0 - точка спавна дрона
-    x1, y1, z1 - точка окончания полета
-
-    INIT_XYZS - вектор начального положения дрона
-
-    TARGET_POS - вся траектория дрона
-
-    NUM_WP - количество шагов симуляции
-    '''
-   
-    x0 = 0
-    y0 = 0
-    z0 = .1
-
+):
+    
+    x0, y0, z0 = 0, 0, .1
     INIT_XYZS = np.array([[x0, y0, z0]])
 
-    x1 = 2
-    y1 = 1
-    z1 = 4
-
-    next_POS = np.zeros((int(NUM_WP/2), 3)) 
-
-    for i in range(int(NUM_WP/2)):
-        j = (i+1)/(NUM_WP/2)
-        next_POS[i, :] = (INIT_XYZS[0, 0] + (x1-x0)*j, INIT_XYZS[0, 1] + (y1-y0)*j, INIT_XYZS[0, 2] + (z1-z0)*j)
-        print(next_POS[i, :])
-    
-    x2 = -3
-    y2 = -2
-    z2 = 2 
- 
-    newt2_POS = np.zeros((int(NUM_WP/2), 3)) 
-
-    for i in range(int(NUM_WP/2)):
-        k = (i+1)/(NUM_WP/2)
-        newt2_POS [i, :] = (next_POS[int(NUM_WP/2)-1, 0] + (x2-x1)*k, next_POS[int(NUM_WP/2)-1, 1] + (y2-y1)*k, next_POS[int(NUM_WP/2)-1, 2] + (z2-z1)*k)
-
-    TARGET_POS = np.vstack((next_POS, newt2_POS,))
-
-    print('\n'*10, TARGET_POS, '\n'*10)
-    
-
-
-    # TODO env!!!!
     env = AutoAviary(drone_model=drone,
                      num_drones=1,
                      initial_xyzs=INIT_XYZS,
+                     physics=Physics.PYB_GND,
                      neighbourhood_radius=10,
                      pyb_freq=simulation_freq_hz,
                      ctrl_freq=control_freq_hz,
@@ -97,71 +50,108 @@ def run(
                      obstacles=True,
                      vision_attributes=vision_attributes)
 
-    wp_counters = [0]
-    wp_counter = 0
-
+    my_route = Route()
+    
+    # Добавляем три точки с координатами и углами RPY
+    my_route.add_point([0.0, 0.0, 0.1], [0.0, 0.0, 0.0])   # Стартовая точка
+    my_route.add_point([0.0, 0.0, 2.1], [0.0, 0.0, 1.57])   # Подняться на 2 метра и повернуться на 90 градусов против часовой стрелки
+    my_route.add_point([3.0, 3.0, 2.1], [0.0, 0.0, 1.57])   # Двигаться вдоль оси Y на 3 метра
 
     logger = Logger(logging_freq_hz=control_freq_hz,
                     num_drones=1,
-                    duration_sec=duration_sec,
                     output_folder=output_folder,
-                    colab=colab
-                    )
-
+                    colab=colab)
 
     ctrl = [DSLPIDControl(drone_model=drone)]
- 
-
-    action = np.zeros((1,4))
+   
+    action = np.zeros((1, 4))
+    
     START = time.time()
-    for i in range(0, int(duration_sec*env.CTRL_FREQ)):
-
-        #### Step the simulation ###################################
+    i = 0
+    current_orientation = [0.0, 0.0, 0.0]
+    # Добавьте эти параметры в функцию run
+    MOVE_STEP = 1.0  # Шаг перемещения (метры)
+    ROTATE_STEP = 0.01  # Шаг поворота (радианы)
+    new_orientation = [0.0, 0.0, 0.0]
+    # Состояние дрона
+    state = "moving_to_target"  # Начальное состояние
+    while True:
+        
         obs, reward, terminated, truncated, info = env.step(action)
-      
+        current_position = obs[0][:3]
+        if i: 
+            current_orientation = new_orientation[:]  
+
+        target_pos = my_route.get_current_point().coordinates.copy()
+        target_orientation = my_route.get_current_point().orientation.copy()
+
+        new_orientation = np.copy(current_orientation)  # Инициализация new_orientation по умолчанию
+
+        if state == "moving_to_target":
+            # Проверяем достижение текущей точки маршрута.
+            if np.linalg.norm(current_position - target_pos) < .1:
+                state = "rotating_to_orientation"  # Переход к следующему состоянию
+
+            # Вычисляем направление к целевой позиции
+            direction = target_pos - current_position
+            distance_to_target = np.linalg.norm(direction)
+
+            if distance_to_target > MOVE_STEP:
+                direction_normalized = direction / distance_to_target
+                new_position = current_position + direction_normalized * MOVE_STEP
+            else:
+                new_position = target_pos  # Достигли цели
+
+        elif state == "rotating_to_orientation":
+            # Вычисляем необходимый угол поворота
+            desired_orientation = target_orientation
+            angle_diff = normalize_angle(desired_orientation - current_orientation)
+
+            # Обновляем ориентацию, приближаясь к нужному углу
+            for j in range(len(current_orientation)):
+                if abs(angle_diff[j]) > ROTATE_STEP:
+                    new_orientation[j] = current_orientation[j] + np.sign(angle_diff[j]) * ROTATE_STEP
+                else:
+                    new_orientation[j] = desired_orientation[j]
+
+            # Проверяем достигли ли нужного угла
+            if all(abs(angle_diff) <= ROTATE_STEP):
+                state = "moving_to_next_point"  # Переход к следующему состоянию
+
+        elif state == "moving_to_next_point":
+            my_route.next_point()  # Переход к следующей точке маршрута.
+            state = "moving_to_target"  # Возвращаемся в начальное состояние
+
+        current_orientation = new_orientation[:]
+
+        print(current_orientation, new_orientation)
         action[0], _, _ = ctrl[0].computeControlFromState(control_timestep=env.CTRL_TIMESTEP,
-                                                             state=obs[0],
-                                                             target_pos=TARGET_POS[wp_counter, :],
-                                                             )
-       
-        if wp_counter < NUM_WP - 1:
-            wp_counter = wp_counter + 1         
-        else:
-            wp_counter = 0 
+                                                            state=obs[0],
+                                                            target_pos=new_position,
+                                                            target_rpy=new_orientation)
 
         for j in range(1):
             logger.log(drone=j,
-                       timestamp=i/env.CTRL_FREQ,
-                       state=obs[j]
-                    #    control=np.hstack([TARGET_POS[wp_counter, :], INIT_XYZS[j ,2], np.zeros(9)])
-                       )
+                        timestamp=i/env.CTRL_FREQ,
+                        state=obs[j])
 
         env.render()
 
-        #### Sync the simulation ###################################
         if gui:
-            sync(i, START, env.CTRL_TIMESTEP)
+            sync(i % env.CTRL_FREQ , START , env.CTRL_TIMESTEP)
 
-    #### Close the environment #################################
-    env.close()
-
-    if plot:
-        logger.plot()
-
-
+        i += 1
 if __name__ == "__main__":
-    #### Define and parse (optional) arguments for the script ##
     parser = argparse.ArgumentParser(description='TBD')
-    parser.add_argument('--drone',              default=DEFAULT_DRONE,     type=DroneModel,    help='Drone model (default: CF2X)', metavar='', choices=DroneModel)
-    parser.add_argument('--gui',                default=DEFAULT_GUI,       type=str2bool,      help='Whether to use PyBullet GUI (default: True)', metavar='')
-    parser.add_argument('--record_video',       default=DEFAULT_RECORD_VIDEO,      type=str2bool,      help='Whether to record a video (default: False)', metavar='')
-    parser.add_argument('--vision_attributes',  default=DEF_VISION_ATTR,      type=str2bool,      help='Whether to record a video frome drone (default: False)', metavar='')
-    parser.add_argument('--simulation_freq_hz', default=DEFAULT_SIMULATION_FREQ_HZ,        type=int,           help='Simulation frequency in Hz (default: 240)', metavar='')
-    parser.add_argument('--control_freq_hz',    default=DEFAULT_CONTROL_FREQ_HZ,         type=int,           help='Control frequency in Hz (default: 48)', metavar='')
-    parser.add_argument('--duration_sec',       default=DEFAULT_DURATION_SEC,         type=int,           help='Duration of the simulation in seconds (default: 10)', metavar='')
-    parser.add_argument('--output_folder',     default=DEFAULT_OUTPUT_FOLDER, type=str,           help='Folder where to save logs (default: "results")', metavar='')
-    parser.add_argument('--colab',              default=DEFAULT_COLAB, type=bool,           help='Whether example is being run by a notebook (default: "False")', metavar='')
+    parser.add_argument('--drone',              default=DEFAULT_DRONE,type=DroneModel , help='Drone model', metavar='', choices=list(DroneModel))
+    parser.add_argument('--gui',                default=DEFAULT_GUI,type=str2bool , help='Whether to use PyBullet GUI', metavar='')
+    parser.add_argument('--record_video',       default=DEFAULT_RECORD_VIDEO,type=str2bool , help='Whether to record a video', metavar='')
+    parser.add_argument('--vision_attributes',   default=DEFAULT_VISION_ATTR,type=str2bool , help='Whether to record a video from drone', metavar='')
+    parser.add_argument('--simulation_freq_hz', default=DEFAULT_SIMULATION_FREQ_HZ,type=int , help='Simulation frequency in Hz', metavar='')
+    parser.add_argument('--control_freq_hz',     default=DEFAULT_CONTROL_FREQ_HZ,type=int , help='Control frequency in Hz', metavar='')
+    parser.add_argument('--output_folder',      default=DEFAULT_OUTPUT_FOLDER,type=str , help='Folder where to save logs', metavar='')
+    parser.add_argument('--colab',              default=DEFAULT_COLAB,type=str , help='Whether example is being run by a notebook', metavar='')
+   
     ARGS = parser.parse_args()
-
+   
     run(**vars(ARGS))
-

@@ -15,6 +15,7 @@ class AprilTagDetector:
     def highlight_tags(self, image, tags):
         # Выделяем обнаруженные теги на изображении зеленым квадратом
         for tag in tags:
+        
             # Получаем координаты углов тега
             corners = tag.corners.astype(int)
             # Рисуем квадрат вокруг тега

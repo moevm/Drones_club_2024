@@ -126,23 +126,6 @@ class AutoAviary(BaseAviary):
                         self.tag_of_cube = True
                         
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-                    	
-
         #### Read the GUI's input parameters #######################
         if self.GUI and self.USER_DEBUG:
             current_input_switch = p.readUserDebugParameter(self.INPUT_SWITCH, physicsClientId=self.CLIENT)

@@ -122,9 +122,9 @@ class AutoAviary(BaseAviary):
                         print(tag)
                         print("*"*20)
                         
-                        self.tag_of_cube = True
+                        self.tag_of_cube = tag[0]
                     else:
-                        self.tag_of_cube = False
+                        self.tag_of_cube = None
                     	
 
         #### Read the GUI's input parameters #######################

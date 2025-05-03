@@ -54,8 +54,8 @@ def run(
     
     # Добавляем три точки с координатами и углами RPY
     my_route.add_point([0.0, 0.0, 0.1], [0.0, 0.0, 0.0])   # Стартовая точка
-    my_route.add_point([0.0, 0.0, 2.1], [0.0, 0.0, 1.57])   # Подняться на 2 метра и повернуться на 90 градусов против часовой стрелки
-    my_route.add_point([3.0, 3.0, 2.1], [0.0, 0.0, 1.57])   # Двигаться вдоль оси Y на 3 метра
+    my_route.add_point([0.0, 3.0, 0.5], [0.0, 0.0, 1.57], True)
+    my_route.add_point([0.0, 0.0, 2.1], [0.0, 0.0, 0.0])
 
     logger = Logger(logging_freq_hz=control_freq_hz,
                     num_drones=1,
@@ -126,15 +126,16 @@ def run(
             state = "moving_to_target"  # Возвращаемся в начальное состояние
 
         elif state == "examining_tag":
-            if not env.tag_of_cube:
-                new_position = current_position - current_orientation * MOVE_STEP
+            if env.tag_of_cube is None:
+                new_position = current_position - np.array([0, 1, 0]) * MOVE_STEP
             else:
                 # здесь можно добавить логику если мы полностью увидели тег
-                state = "moving_to_target"
+                state = "moving_to_next_point"
 
         current_orientation = new_orientation[:]
 
         print(current_orientation, new_orientation)
+        print(env.tag_of_cube is not None, '*' * 30)
         action[0], _, _ = ctrl[0].computeControlFromState(control_timestep=env.CTRL_TIMESTEP,
                                                             state=obs[0],
                                                             target_pos=new_position,

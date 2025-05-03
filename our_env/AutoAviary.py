@@ -64,6 +64,7 @@ class AutoAviary(BaseAviary):
 
         """
         self.tag_of_cube = False
+        
         super().__init__(drone_model=drone_model,
                          num_drones=num_drones,
                          neighbourhood_radius=neighbourhood_radius,
@@ -123,6 +124,23 @@ class AutoAviary(BaseAviary):
                         print("*"*20)
                         
                         self.tag_of_cube = True
+                        
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
                     	
 
         #### Read the GUI's input parameters #######################
@@ -308,10 +326,10 @@ class AutoAviary(BaseAviary):
                     ##   p.getQuaternionFromEuler([0,0,0]),
                     ##   physicsClientId=self.CLIENT)
 
-            cube_1 = GameObject("cube_1.urdf",[0, 4, 2], [0, 0, 1.5708], 0)
-            cube_2 = GameObject("cube_2.urdf",[-2, 6, 0.5], [0, 0, 1.5708], 0)
-            cube_3 = GameObject("cube_3.urdf",[0, 8, 0.5], [0, 0, 1.5708], 0)
-            cube_4 = GameObject("cube_4.urdf",[2, 6, 0.5], [0, 0, 1.5708], 0)              
+            cube_1 = GameObject("cube_1.urdf",[0, 4, 0.5], [0, 0, 1.5708], 0)
+            cube_2 = GameObject("cube_2.urdf",[-2, 6, 0.5], [0, 0, 0], 0)
+            cube_3 = GameObject("cube_3.urdf",[0, 8, 0.5], [0, 0, 4.71], 0)
+            cube_4 = GameObject("cube_4.urdf",[2, 6, 0.5], [0, 0, 3.14], 0)              
             cube_doge = GameObject("cube_with_sobaken.urdf",[0, 6, 0.5], [0, 0, 0], 0)  
 
         else:

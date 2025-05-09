@@ -123,6 +123,9 @@ def run(
 
         elif state == "moving_to_next_point":
             my_route.next_point()  # Переход к следующей точке маршрута.
+            if my_route.ended:
+                break
+
             state = "moving_to_target"  # Возвращаемся в начальное состояние
 
         elif state == "examining_tag":
@@ -152,6 +155,10 @@ def run(
             sync(i % env.CTRL_FREQ , START , env.CTRL_TIMESTEP)
 
         i += 1
+
+        if time.time() - START >= 300:
+            break
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='TBD')
     parser.add_argument('--drone',              default=DEFAULT_DRONE,type=DroneModel , help='Drone model', metavar='', choices=list(DroneModel))

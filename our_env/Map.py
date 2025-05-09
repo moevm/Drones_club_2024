@@ -12,6 +12,7 @@ class Route:
     def __init__(self):
         self.points = []
         self.current_index = 0
+        self.ended = False
 
     def add_point(self, coordinates, orientation, expecting_tag = False):
         self.points.append(Point(coordinates, orientation, expecting_tag))
@@ -23,6 +24,8 @@ class Route:
         if self.current_index < len(self.points) - 1:
             print("___________________________________")
             self.current_index += 1
+        else:
+            self.ended = True
 
     def is_last_point(self):
         return self.current_index == len(self.points) - 1

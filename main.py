@@ -9,6 +9,7 @@ from gym_pybullet_drones.control.DSLPIDControl import DSLPIDControl
 from gym_pybullet_drones.utils.Logger import Logger
 from our_env.AutoAviary import AutoAviary
 from our_env.Map import Route
+from our_env.AutoAviary import *
 
 DEFAULT_DRONE = DroneModel('cf2x')
 DEFAULT_GUI = True
@@ -54,8 +55,39 @@ def run(
     
     # Добавляем три точки с координатами и углами RPY
     my_route.add_point([0.0, 0.0, 0.1], [0.0, 0.0, 0.0])   # Стартовая точка
-    my_route.add_point([0.0, 3.0, 0.5], [0.0, 0.0, 1.57], True)
-    my_route.add_point([0.0, 0.0, 2.1], [0.0, 0.0, 0.0])
+
+    my_route.add_point([0.0, 0.0, 2.0], [0.0, 0.0, 0.0])
+    my_route.add_point([0.0, 2.5, 2.0], [0.0, 0.0, 0.0])   # Подняться на 2 метра и повернуться на 90 градусов против часовой стрелки
+    my_route.add_point([0.0, 2.5, 0.5], [0.0, 0.0, 0.0])
+    my_route.add_point([0.0, 1.6, 0.5], [0.0, 0.0, 1.57], True) ## 1 cube
+       # Двигаться вдоль оси Y
+    
+    
+    my_route.add_point([0.0, 2.5, 2.1], [0.0, 0.0, 0.0])   # Двигаться вдоль оси Y
+    
+    
+    
+    
+    my_route.add_point([-2.7, 6.0, 2.1], [0.0, 0.0, 0.0])
+    my_route.add_point([-2.7, 6.0, 0.8], [0.0, 0.0, 0.0])
+    my_route.add_point([-4.0, 6.0, 0.8], [0.0, 0.0, 0.0], True) ## 2_cube
+    my_route.add_point([-2.7, 6.0, 2.0], [0.0, 0.0, 0.0])
+    
+    my_route.add_point([-2.7, 8.5, 2.0], [0.0, 0.0, 4.71])
+    my_route.add_point([0.0, 8.7, 2.0], [0.0, 0.0, 4.71])
+    my_route.add_point([0.0, 8.7, 0.8], [0.0, 0.0, 4.71], True) ## 3_cube
+    my_route.add_point([0.0, 10.0, 0.8], [0.0, 0.0, 4.71])
+    my_route.add_point([0.0, 10.0, 2.0], [0.0, 0.0, 4.71])
+    
+    #
+    my_route.add_point([2.5, 6.0, 2.0], [0.0, 0.0, 3.14])
+    my_route.add_point([2.5, 6.0, 0.8], [0.0, 0.0, 3.14], True) ## 4_cube
+    my_route.add_point([3.5, 6.0, 0.8], [0.0, 0.0, 3.14])
+    
+    
+    
+    my_route.add_point([0.0, 0.0, 0.1], [0.0, 0.0, 0]) ## go_home
+    
 
     logger = Logger(logging_freq_hz=control_freq_hz,
                     num_drones=1,
@@ -71,7 +103,7 @@ def run(
     current_orientation = [0.0, 0.0, 0.0]
     # Добавьте эти параметры в функцию run
     MOVE_STEP = 1.0  # Шаг перемещения (метры)
-    ROTATE_STEP = 0.01  # Шаг поворота (радианы)
+    ROTATE_STEP = 0.05# Шаг поворота (радианы)
     new_orientation = [0.0, 0.0, 0.0]
     # Состояние дрона
     state = "moving_to_target"  # Начальное состояние
@@ -120,6 +152,7 @@ def run(
                     state = "examining_tag" # изучаем тег
                 else:
                     state = "moving_to_next_point"  # Переход к следующему состоянию
+
 
         elif state == "moving_to_next_point":
             my_route.next_point()  # Переход к следующей точке маршрута.

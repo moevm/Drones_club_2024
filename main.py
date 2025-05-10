@@ -14,8 +14,8 @@ from our_env.AutoAviary import *
 DEFAULT_DRONE = DroneModel('cf2x')
 DEFAULT_GUI = True
 DEFAULT_RECORD_VIDEO = True
-DEFAULT_SIMULATION_FREQ_HZ = 240
-DEFAULT_CONTROL_FREQ_HZ = 48
+DEFAULT_SIMULATION_FREQ_HZ = 120
+DEFAULT_CONTROL_FREQ_HZ = 24
 
 DEFAULT_OUTPUT_FOLDER = 'my_results'
 DEFAULT_COLAB = True
@@ -55,33 +55,38 @@ def run(
     
     # Добавляем три точки с координатами и углами RPY
     my_route.add_point([0.0, 0.0, 0.1], [0.0, 0.0, 0.0])   # Стартовая точка
+
     my_route.add_point([0.0, 0.0, 2.0], [0.0, 0.0, 0.0])
-    my_route.add_point([0.0, 2.5, 2.0], [0.0, 0.0, 0.0])   # Подняться на 2 метра и повернуться на 90 градусов против часовой стрелки
-    my_route.add_point([0.0, 2.5, 0.5], [0.0, 0.0, 0.0])
-    my_route.add_point([0.0, 1.6, 0.5], [0.0, 0.0, 1.57]) ## 1 cube
+    my_route.add_point([0.0, 4, 2.0], [0.0, 0.0, 1.57], True)   # Подняться на 2 метра и повернуться на 90 градусов против часовой стрелки
+    #my_route.add_point([0.0, 2.5, 0.5], [0.0, 0.0, 1.57], True)## 1 cube
+    #my_route.add_point([0.0, 1.6, 0.5], [0.0, 0.0, 1.57], True) ## 1 cube
        # Двигаться вдоль оси Y
     
     
-    my_route.add_point([0.0, 2.5, 2.1], [0.0, 0.0, 0.0])   # Двигаться вдоль оси Y
+    #my_route.add_point([0.0, 2.5, 2.1], [0.0, 0.0, 0.0])   # Двигаться вдоль оси Y
     
     
+    my_route.add_point([7, 6.0, 2.0], [0.0, 0.0, 1.57])
+    my_route.add_point([6, 10, 2.0], [0.0, 0.0, 3.14], True) ## 4_cube
+
+    my_route.add_point([7, 15, 2.0], [0.0, 0.0, 3.14])
+    my_route.add_point([0.0, 16, 2.0], [0.0, 0.0, 4.71], True) ## 3_cube
     
+    my_route.add_point([-7, 15.0, 2.0], [0.0, 0.0, 4.71])
+    my_route.add_point([-6, 15, 2.0], [0.0, 0.0, 6.28], True)
+    #my_route.add_point([-4.0, 6.0, 0.8], [0.0, 0.0, 0.0], True) ## 2_cube
+   # my_route.add_point([-2.7, 6.0, 2.0], [0.0, 0.0, 0.0])
     
-    my_route.add_point([-2.7, 6.0, 2.1], [0.0, 0.0, 0.0])
-    my_route.add_point([-2.7, 6.0, 0.8], [0.0, 0.0, 0.0])
-    my_route.add_point([-4.0, 6.0, 0.8], [0.0, 0.0, 0.0]) ## 2_cube
-    my_route.add_point([-2.7, 6.0, 2.0], [0.0, 0.0, 0.0])
-    
-    my_route.add_point([-2.7, 8.5, 2.0], [0.0, 0.0, 4.71])
-    my_route.add_point([0.0, 8.7, 2.0], [0.0, 0.0, 4.71])
-    my_route.add_point([0.0, 8.7, 0.8], [0.0, 0.0, 4.71]) ## 3_cube
-    my_route.add_point([0.0, 10.0, 0.8], [0.0, 0.0, 4.71])
-    my_route.add_point([0.0, 10.0, 2.0], [0.0, 0.0, 4.71])
+    #my_route.add_point([-2.7, 8.5, 2.0], [0.0, 0.0, 4.71])
+   # my_route.add_point([0.0, 8.7, 2.0], [0.0, 0.0, 0.0])
+    #my_route.add_point([0.0, 8.7, 0.8], [0.0, 0.0, 4.71], True) ## 3_cube
+    #my_route.add_point([0.0, 10.0, 0.8], [0.0, 0.0, 4.71])
+    #my_route.add_point([0.0, 10.0, 2.0], [0.0, 0.0, 4.71])
     
     #
-    my_route.add_point([2.5, 6.0, 2.0], [0.0, 0.0, 3.14])
-    my_route.add_point([2.5, 6.0, 0.8], [0.0, 0.0, 3.14]) ## 4_cube
-    my_route.add_point([3.5, 6.0, 0.8], [0.0, 0.0, 3.14])
+   # my_route.add_point([2.5, 6.0, 2.0], [0.0, 0.0, 4.71])
+   # my_route.add_point([2.5, 6.0, 0.8], [0.0, 0.0, 3.14], True) ## 4_cube
+    my_route.add_point([-7, 6.0, 2.0], [0.0, 0.0, 6.28])
     
     
     
@@ -117,10 +122,10 @@ def run(
         target_orientation = my_route.get_current_point().orientation.copy()
 
         new_orientation = np.copy(current_orientation)  # Инициализация new_orientation по умолчанию
-
+        print(state)
         if state == "moving_to_target":
             # Проверяем достижение текущей точки маршрута.
-            if np.linalg.norm(current_position - target_pos) < .1:
+            if np.linalg.norm(current_position - target_pos) < .2:
                 state = "rotating_to_orientation"  # Переход к следующему состоянию
 
             # Вычисляем направление к целевой позиции
@@ -134,6 +139,7 @@ def run(
                 new_position = target_pos  # Достигли цели
 
         elif state == "rotating_to_orientation":
+            print(state)
             # Вычисляем необходимый угол поворота
             desired_orientation = target_orientation
             angle_diff = normalize_angle(desired_orientation - current_orientation)
@@ -147,19 +153,49 @@ def run(
 
             # Проверяем достигли ли нужного угла
             if all(abs(angle_diff) <= ROTATE_STEP):
-                state = "moving_to_next_point"  # Переход к следующему состоянию
-                
-        ## elif dvigdtisa ot tochki        
-                
-                
+                if my_route.get_current_point().expecting_tag:
+                    state = "examining_tag" # изучаем тег
+                else:
+                    state = "moving_to_next_point"  # Переход к следующему состоянию
+
 
         elif state == "moving_to_next_point":
             my_route.next_point()  # Переход к следующей точке маршрута.
+            if my_route.ended:
+                break
+
             state = "moving_to_target"  # Возвращаемся в начальное состояние
+
+        elif state == "examining_tag":
+            if (current_orientation[2] >= -np.pi/4 and current_orientation[2] < np.pi/4) or \
+            (current_orientation[2] >= 7*np.pi/4 or current_orientation[2] < -7*np.pi/4):
+                # Дрон смотрит вдоль оси X
+                backward_direction = np.array([-1, 0, 0])  # В противоположную сторону по X
+            elif (current_orientation[2] >= np.pi/4 and current_orientation[2] < 3*np.pi/4):
+                # Дрон смотрит вдоль оси Y
+                backward_direction = np.array([0, -1, 0])  # В противоположную сторону по Y
+            elif (current_orientation[2] >= 3*np.pi/4 and current_orientation[2] < 5*np.pi/4):
+                # Дрон смотрит обратно вдоль оси X
+                backward_direction = np.array([1, 0, 0])  # В противоположную сторону по X
+            else:
+                # Дрон смотрит обратно вдоль оси Y
+                backward_direction = np.array([0, 1, 0])  # В противоположную сторону по Y
+            #backward_direction = np.array([-np.sin(current_orientation[2]), np.cos(current_orientation[2]), 0])
+            #side_direction = np.array([np.cos(current_orientation[2]), np.sin(current_orientation[2]), 0])
+            print("="*20)
+            if env.tag_of_cube is None:
+                print("-"*20)
+                print("Backward direction:", backward_direction)
+                #print("Side direction:", side_direction)
+                new_position = current_position + backward_direction * MOVE_STEP
+            else:
+                # здесь можно добавить логику если мы полностью увидели тег
+                state = "moving_to_next_point"
 
         current_orientation = new_orientation[:]
 
         print(current_orientation, new_orientation)
+        print(env.tag_of_cube is not None, '*' * 30)
         action[0], _, _ = ctrl[0].computeControlFromState(control_timestep=env.CTRL_TIMESTEP,
                                                             state=obs[0],
                                                             target_pos=new_position,
@@ -176,6 +212,10 @@ def run(
             sync(i % env.CTRL_FREQ , START , env.CTRL_TIMESTEP)
 
         i += 1
+
+        if time.time() - START >= 30000:
+            break
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='TBD')
     parser.add_argument('--drone',              default=DEFAULT_DRONE,type=DroneModel , help='Drone model', metavar='', choices=list(DroneModel))

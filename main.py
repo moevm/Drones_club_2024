@@ -57,37 +57,17 @@ def run(
     my_route.add_point([0.0, 0.0, 0.1], [0.0, 0.0, 0.0])   # Стартовая точка
 
     my_route.add_point([0.0, 0.0, 2.0], [0.0, 0.0, 0.0])
-    my_route.add_point([0.0, 4, 2.0], [0.0, 0.0, 1.57], True)   # Подняться на 2 метра и повернуться на 90 градусов против часовой стрелки
-    #my_route.add_point([0.0, 2.5, 0.5], [0.0, 0.0, 1.57], True)## 1 cube
-    #my_route.add_point([0.0, 1.6, 0.5], [0.0, 0.0, 1.57], True) ## 1 cube
-       # Двигаться вдоль оси Y
-    
-    
-    #my_route.add_point([0.0, 2.5, 2.1], [0.0, 0.0, 0.0])   # Двигаться вдоль оси Y
-    
+    my_route.add_point([0.0, 4, 2.0], [0.0, 0.0, 1.57], True)       
     
     my_route.add_point([7, 6.0, 2.0], [0.0, 0.0, 1.57])
-    my_route.add_point([6, 10, 2.0], [0.0, 0.0, 3.14], True) ## 4_cube
+    my_route.add_point([6, 10, 2.0], [0.0, 0.0, 3.14], True) ## 2_cube
 
     my_route.add_point([7, 15, 2.0], [0.0, 0.0, 3.14])
     my_route.add_point([0.0, 16, 2.0], [0.0, 0.0, 4.71], True) ## 3_cube
     
     my_route.add_point([-7, 15.0, 2.0], [0.0, 0.0, 4.71])
-    my_route.add_point([-6, 15, 2.0], [0.0, 0.0, 6.28], True)
-    #my_route.add_point([-4.0, 6.0, 0.8], [0.0, 0.0, 0.0], True) ## 2_cube
-   # my_route.add_point([-2.7, 6.0, 2.0], [0.0, 0.0, 0.0])
-    
-    #my_route.add_point([-2.7, 8.5, 2.0], [0.0, 0.0, 4.71])
-   # my_route.add_point([0.0, 8.7, 2.0], [0.0, 0.0, 0.0])
-    #my_route.add_point([0.0, 8.7, 0.8], [0.0, 0.0, 4.71], True) ## 3_cube
-    #my_route.add_point([0.0, 10.0, 0.8], [0.0, 0.0, 4.71])
-    #my_route.add_point([0.0, 10.0, 2.0], [0.0, 0.0, 4.71])
-    
-    #
-   # my_route.add_point([2.5, 6.0, 2.0], [0.0, 0.0, 4.71])
-   # my_route.add_point([2.5, 6.0, 0.8], [0.0, 0.0, 3.14], True) ## 4_cube
+    my_route.add_point([-6, 10, 2.0], [0.0, 0.0, 6.28], True) 
     my_route.add_point([-7, 6.0, 2.0], [0.0, 0.0, 6.28])
-    
     
     
     my_route.add_point([0.0, 0.0, 0.1], [0.0, 0.0, 0]) ## go_home
